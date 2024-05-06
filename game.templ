@@ -1,5 +1,20 @@
 package main
 
 templ hello(name string) {
-	<div>Hi, { name }</div>
+	<button hx-post="clicked-hi">Hi, { name }</button>
+}
+
+templ Page() {
+    <!DOCTYPE html>
+	<html>
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Tic-Tac-Go</title>
+			<script src="/assets/js/htmx.min.js"></script>
+		</head>
+		<body>
+			@hello("Jason")
+		</body>
+	</html>
 }
