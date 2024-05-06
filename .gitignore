@@ -1,0 +1,7 @@
+# air temporary dir
+tmp
+
+# generated templ files
+*_templ.go
+
+tic-tac-go
