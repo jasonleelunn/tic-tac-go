@@ -1,7 +1,13 @@
 package main
 
-templ hello(name string) {
-	<button hx-post="clicked-hi">Hi, { name }</button>
+import "strconv"
+
+templ grid(name string) {
+	<div id="grid">
+	for num := range 9 {
+	  <div hx-post={"/cells/" + strconv.Itoa(num)}>&nbsp;</div>
+	}
+	</div>
 }
 
 templ Page() {
@@ -12,9 +18,10 @@ templ Page() {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>Tic-Tac-Go</title>
 			<script src="/assets/js/htmx.min.js"></script>
+			<link rel="stylesheet" href="/assets/css/styles.css"></link>
 		</head>
 		<body>
-			@hello("Jason")
+			@grid("Jason")
 		</body>
 	</html>
 }
