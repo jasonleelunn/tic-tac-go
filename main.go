@@ -3,53 +3,31 @@ package main
 import (
 	"log"
 	"net/http"
-)
 
-type Token int
-
-type Game struct {
-	currentToken Token
-	grid         map[string]bool
-}
-
-const (
-	naught Token = iota
-	cross
-)
-
-var (
-	tokens = map[Token]string{
-		naught: "O",
-		cross:  "X",
-	}
+	"github.com/jasonleelunn/tic-tac-go/game"
 )
 
 func main() {
-	game := Game{currentToken: naught, grid: make(map[string]bool)}
+	state := game.New()
 
 	router := http.NewServeMux()
 
 	router.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		Page().Render(r.Context(), w)
+		game.Page().Render(r.Context(), w)
 	})
 
 	router.HandleFunc("POST /cells/{cell}", func(w http.ResponseWriter, r *http.Request) {
 		cell := r.PathValue("cell")
 
-		if game.grid[cell] == true {
+		// disallow choosing a cell more than once
+		if state.GetGridCell(cell) == true {
 			w.WriteHeader(http.StatusTeapot)
 			return
 		}
 
-		game.grid[cell] = true
+		state.MarkGridCell(cell)
 
-		w.Write([]byte(tokens[game.currentToken]))
-
-		if game.currentToken == naught {
-			game.currentToken = cross
-		} else {
-			game.currentToken = naught
-		}
+		w.Write([]byte(state.GetCurrentTokenString()))
 	})
 
 	router.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))

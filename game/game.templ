@@ -1,11 +1,11 @@
-package main
+package game
 
 import "strconv"
 
 templ grid(name string) {
 	<div id="grid">
 	for num := range 9 {
-	  <div hx-post={"/cells/" + strconv.Itoa(num)}>&nbsp;</div>
+	  <div hx-post={"/cells/" + strconv.Itoa(num)} hx-trigger="click once">&nbsp;</div>
 	}
 	</div>
 }
