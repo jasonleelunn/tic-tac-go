@@ -19,13 +19,13 @@ func main() {
 	router.HandleFunc("POST /cells/{cell}", func(w http.ResponseWriter, r *http.Request) {
 		cell := r.PathValue("cell")
 
+		err := state.MarkGridCell(cell)
+
 		// disallow choosing a cell more than once
-		if state.GetGridCell(cell) == true {
+		if err != nil {
 			w.WriteHeader(http.StatusTeapot)
 			return
 		}
-
-		state.MarkGridCell(cell)
 
 		w.Write([]byte(state.GetCurrentTokenString()))
 

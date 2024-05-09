@@ -1,5 +1,7 @@
 package game
 
+import "errors"
+
 type token int
 
 type State struct {
@@ -40,10 +42,14 @@ func (s *State) ChangeCurrentToken() {
 	}
 }
 
-func (s *State) GetGridCell(c string) bool {
-	return s.grid[c]
-}
+func (s *State) MarkGridCell(cellNumber string) error {
+	c := s.grid[cellNumber]
 
-func (s *State) MarkGridCell(c string) {
-	s.grid[c] = true
+	if c == true {
+		return errors.New("This grid cell is already taken!")
+	}
+
+	s.grid[cellNumber] = true
+
+	return nil
 }
