@@ -28,6 +28,8 @@ func main() {
 		state.MarkGridCell(cell)
 
 		w.Write([]byte(state.GetCurrentTokenString()))
+
+		state.ChangeCurrentToken()
 	})
 
 	router.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
