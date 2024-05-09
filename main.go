@@ -3,12 +3,13 @@ package main
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/jasonleelunn/tic-tac-go/game"
 )
 
 func main() {
-	state := game.New()
+	g := game.New()
 
 	router := http.NewServeMux()
 
@@ -17,9 +18,20 @@ func main() {
 	})
 
 	router.HandleFunc("POST /cells/{cell}", func(w http.ResponseWriter, r *http.Request) {
-		cell := r.PathValue("cell")
+		// do nothing if game is already over
+		if g.IsFinished() {
+			w.WriteHeader(http.StatusTeapot)
+			return
+		}
 
-		err := state.MarkGridCell(cell)
+		cellNumber, err := strconv.Atoi(r.PathValue("cell"))
+
+		if err != nil || cellNumber < 0 || cellNumber > 8 {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		err = g.MarkGridCell(cellNumber)
 
 		// disallow choosing a cell more than once
 		if err != nil {
@@ -27,9 +39,9 @@ func main() {
 			return
 		}
 
-		w.Write([]byte(state.GetCurrentTokenString()))
+		w.Write([]byte(g.GetCurrentTokenString()))
 
-		state.ChangeCurrentToken()
+		g.ChangeCurrentToken()
 	})
 
 	router.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
