@@ -2,7 +2,6 @@ package game
 
 import (
 	"errors"
-	"fmt"
 )
 
 type token int
@@ -80,7 +79,6 @@ func (g *gameState) ChangeCurrentToken() {
 
 func (g *gameState) MarkGridCell(cellNumber int) error {
 	c := g.grid[cellNumber]
-	fmt.Print()
 
 	if c != empty {
 		return errors.New("This grid cell is already taken!")
