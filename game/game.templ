@@ -2,26 +2,33 @@ package game
 
 import "strconv"
 
-templ grid(name string) {
+templ grid() {
 	<div id="grid">
-	for num := range 9 {
-	  <div hx-post={"/cells/" + strconv.Itoa(num)} hx-trigger="click once">&nbsp;</div>
-	}
+		for num := range 9 {
+			<div hx-post={ "/cells/" + strconv.Itoa(num) } hx-trigger="click once">&nbsp;</div>
+		}
 	</div>
 }
 
-templ Page() {
-    <!DOCTYPE html>
+templ status(message string) {
+	<h3 id="status" hx-get="/status" hx-trigger="status-changed from:body">
+		{ message }
+	</h3>
+}
+
+templ Page(statusMessage string) {
+	<!DOCTYPE html>
 	<html>
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>Tic-Tac-Go</title>
 			<script src="/assets/js/htmx.min.js"></script>
-			<link rel="stylesheet" href="/assets/css/styles.css"></link>
+			<link rel="stylesheet" href="/assets/css/styles.css"/>
 		</head>
 		<body>
-			@grid("Jason")
+			@status(statusMessage)
+			@grid()
 		</body>
 	</html>
 }

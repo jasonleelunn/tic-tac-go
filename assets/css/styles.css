@@ -10,9 +10,11 @@ body {
   box-sizing: border-box;
   overflow: hidden;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   font-family: system-ui;
+  color: var(--contrast-colour);
   background-color: var(--background-colour);
 }
 
@@ -33,5 +35,9 @@ body {
   border-radius: 1em;
   font-size: 3.5rem;
   background-color: var(--primary-colour);
-  color: var(--contrast-colour);
+}
+
+#grid > div:hover {
+  opacity: 0.75;
+  cursor: pointer;
 }

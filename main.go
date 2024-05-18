@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -9,18 +10,29 @@ import (
 )
 
 func main() {
-	g := game.New()
+	var g *game.GameState
 
 	router := http.NewServeMux()
 
 	router.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		game.Page().Render(r.Context(), w)
+		g = game.New()
+		game.Page("X's Turn").Render(r.Context(), w)
+	})
+
+	router.HandleFunc("GET /status", func(w http.ResponseWriter, r *http.Request) {
+		if g.IsFinished() {
+			w.Write([]byte(fmt.Sprintf("%s Wins!", g.GetWinningTokenString())))
+			return
+		}
+
+		currToken := g.GetCurrentTokenString()
+
+		w.Write([]byte(fmt.Sprintf("%s's Turn", currToken)))
 	})
 
 	router.HandleFunc("POST /cells/{cell}", func(w http.ResponseWriter, r *http.Request) {
-		// do nothing if game is already over
 		if g.IsFinished() {
-			w.WriteHeader(http.StatusTeapot)
+			w.WriteHeader(http.StatusForbidden)
 			return
 		}
 
@@ -35,10 +47,11 @@ func main() {
 
 		// disallow choosing a cell more than once
 		if err != nil {
-			w.WriteHeader(http.StatusTeapot)
+			w.WriteHeader(http.StatusForbidden)
 			return
 		}
 
+		w.Header().Add("HX-Trigger", "status-changed")
 		w.Write([]byte(g.GetCurrentTokenString()))
 
 		g.ChangeCurrentToken()

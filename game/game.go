@@ -6,7 +6,7 @@ import (
 
 type token int
 
-type gameState struct {
+type GameState struct {
 	currentToken token
 	winningToken token
 	grid         map[int]token
@@ -20,11 +20,12 @@ const (
 
 var (
 	tokens = map[token]string{
+		empty:  "",
 		cross:  "X",
 		naught: "O",
 	}
 
-	winGroups = [][3]int{
+	winGroups = [8][3]int{
 		// horizontal
 		{0, 1, 2},
 		{3, 4, 5},
@@ -41,14 +42,14 @@ var (
 	}
 )
 
-func New() *gameState {
-	return &gameState{
+func New() *GameState {
+	return &GameState{
 		currentToken: cross,
 		grid:         make(map[int]token),
 	}
 }
 
-func (g *gameState) IsFinished() bool {
+func (g *GameState) IsFinished() bool {
 	// grid is full, game must be over
 	if len(g.grid) == 9 {
 		return true
@@ -57,19 +58,15 @@ func (g *gameState) IsFinished() bool {
 	return g.winningToken != empty
 }
 
-func (g *gameState) GetWinningTokenString() (string, error) {
-	if g.winningToken == empty {
-		return "", errors.New("No winner yet!")
-	}
-
-	return tokens[g.winningToken], nil
+func (g *GameState) GetWinningTokenString() string {
+	return tokens[g.winningToken]
 }
 
-func (g *gameState) GetCurrentTokenString() string {
+func (g *GameState) GetCurrentTokenString() string {
 	return tokens[g.currentToken]
 }
 
-func (g *gameState) ChangeCurrentToken() {
+func (g *GameState) ChangeCurrentToken() {
 	if g.currentToken == naught {
 		g.currentToken = cross
 	} else {
@@ -77,7 +74,7 @@ func (g *gameState) ChangeCurrentToken() {
 	}
 }
 
-func (g *gameState) MarkGridCell(cellNumber int) error {
+func (g *GameState) MarkGridCell(cellNumber int) error {
 	c := g.grid[cellNumber]
 
 	if c != empty {
@@ -91,7 +88,7 @@ func (g *gameState) MarkGridCell(cellNumber int) error {
 	return nil
 }
 
-func (g *gameState) updateWinningToken() {
+func (g *GameState) updateWinningToken() {
 	for _, winGroup := range winGroups {
 		var crossMatch int
 		var naughtMatch int
