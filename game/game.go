@@ -49,7 +49,7 @@ func (t token) String() string {
 func New() *GameState {
 	return &GameState{
 		currentToken: cross,
-		grid:         make(map[int]token),
+		grid:         make(map[int]token, 9),
 	}
 }
 
