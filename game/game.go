@@ -19,7 +19,7 @@ const (
 )
 
 var (
-	tokens = map[token]string{
+	tokenStrings = map[token]string{
 		empty:  "",
 		cross:  "X",
 		naught: "O",
@@ -42,11 +42,27 @@ var (
 	}
 )
 
+func (t token) String() string {
+	return tokenStrings[t]
+}
+
 func New() *GameState {
 	return &GameState{
 		currentToken: cross,
 		grid:         make(map[int]token),
 	}
+}
+
+func (g *GameState) String() string {
+	if g.IsFinished() {
+		if g.winningToken == empty {
+			return "Draw!"
+		} else {
+			return g.winningToken.String() + " Wins!"
+		}
+	}
+
+	return g.currentToken.String() + "'s Turn"
 }
 
 func (g *GameState) IsFinished() bool {
@@ -58,12 +74,12 @@ func (g *GameState) IsFinished() bool {
 	return g.winningToken != empty
 }
 
-func (g *GameState) GetWinningTokenString() string {
-	return tokens[g.winningToken]
+func (g *GameState) GetWinningToken() token {
+	return g.winningToken
 }
 
-func (g *GameState) GetCurrentTokenString() string {
-	return tokens[g.currentToken]
+func (g *GameState) GetCurrentToken() token {
+	return g.currentToken
 }
 
 func (g *GameState) ChangeCurrentToken() {

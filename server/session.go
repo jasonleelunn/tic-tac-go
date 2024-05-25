@@ -21,8 +21,8 @@ var sessions = map[string]session{}
 type requestContextKey int
 
 type session struct {
-	expiry time.Time
-	state  *game.GameState
+	expiry    time.Time
+	gameState *game.GameState
 }
 
 func (s *session) isExpired() bool {

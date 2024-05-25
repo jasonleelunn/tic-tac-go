@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -20,7 +19,7 @@ func newGameHandler(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteStrictMode,
 	})
 
-	game.Page("X's Turn").Render(r.Context(), w)
+	game.Page(g.String()).Render(r.Context(), w)
 }
 
 func statusHandler(w http.ResponseWriter, r *http.Request) {
@@ -31,16 +30,9 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	g := s.state
+	g := s.gameState
 
-	if g.IsFinished() {
-		w.Write([]byte(fmt.Sprintf("%s Wins!", g.GetWinningTokenString())))
-		return
-	}
-
-	currToken := g.GetCurrentTokenString()
-
-	w.Write([]byte(fmt.Sprintf("%s's Turn", currToken)))
+	w.Write([]byte(g.String()))
 }
 
 func cellHandler(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +43,7 @@ func cellHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	g := s.state
+	g := s.gameState
 
 	if g.IsFinished() {
 		w.WriteHeader(http.StatusForbidden)
@@ -74,7 +66,7 @@ func cellHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Add("HX-Trigger", "status-changed")
-	w.Write([]byte(g.GetCurrentTokenString()))
+	w.Write([]byte(g.GetCurrentToken().String()))
 
 	g.ChangeCurrentToken()
 }
